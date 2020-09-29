@@ -72,33 +72,60 @@ users.push(secondUser);
 carts.push(firstCart);
 carts.push(secondCart);
 
-
 // populating carts
-item = storeItems.find((storeItem) => {
+let storeItem = storeItems.find((storeItem) => {
         return storeItem.name === "apple";
     });
-item.count = 2;
+let item = {
+    id: storeItem.id,
+    name: storeItem.name,
+    quantity: 2
+}
 firstUser.cart.cartItems.push(item);
 
-item = storeItems.find((storeItem) => {
+storeItem = storeItems.find((storeItem) => {
         return storeItem.name === "banana";
     });
-item.count = 4;
+item = {
+    id: storeItem.id,
+    name: storeItem.name,
+    quantity: 4
+}
 firstUser.cart.cartItems.push(item);
-item.count = 3;
+
+item = {
+    id: storeItem.id,
+    name: storeItem.name,
+    quantity: 3
+}
 secondUser.cart.cartItems.push(item);
 
-item = storeItems.find((storeItem) => {
+storeItem = storeItems.find((storeItem) => {
         return storeItem.name === "guitar";
     });
-item.count = 1;
+item = {
+    id: storeItem.id,
+    name: storeItem.name,
+    quantity: 1
+};
 secondUser.cart.cartItems.push(item);
 
-item = storeItems.find((storeItem) => {
+
+storeItem = storeItems.find((storeItem) => {
         return storeItem.name === "keyboard";
     });
-item.count = 1;
+item = {
+    id: storeItem.id,
+    name: storeItem.name,
+    quantity: 1
+}
 firstUser.cart.cartItems.push(item);
+
+item = {
+    id: storeItem.id,
+    name: storeItem.name,
+    quantity: 1
+}
 secondUser.cart.cartItems.push(item);
 
 
@@ -153,8 +180,75 @@ app.delete('/user/:UserId/cart', (req, res) => {
     res.send(foundCartItems ? foundUser.cart : 404);
 });
 
+// add new item to cart by CartId
 app.post('/cart/:CartId/cartItem', (req, res) => {
+    const foundCart = carts.find((cart) => {
+        return cart.id == req.params.CartId;
+    })
+    if (!foundCart) return res.send(404);
 
+    let foundCartItem = foundCart.cartItems.find((cartItem) => {
+        return cartItem.id == req.body.id;
+    });
+
+    if (foundCartItem) {
+        foundCartItem.quantity += req.body.quantity;
+        return res.send(foundCart);
+    } else {
+        let foundStoreItem = storeItems.find((storeItem) => {
+            return storeItem.id == req.body.id;
+        });
+        if (!foundStoreItem) return res.send(404);
+
+        let newCartItem = {
+            id: foundStoreItem.id,
+            name: foundStoreItem.name,
+            quantity: req.body.quantity
+        };
+        foundCart.cartItems.push(newCartItem);
+        return res.send(foundCart);
+    }
+
+    res.send(404);
 });
+
+// remove item from cart by CartId, cartItemId
+app.delete('/cart/:CartId/cartItem/:cartItemId', (req, res) => {
+    let foundCart = carts.find((cart) => {
+        return cart.id == req.params.CartId;
+    })
+    if (!foundCart) return res.send(404);
+    const foundCartIndex = foundCart.cartItems.indexOf(foundCart.cartItems.find( (cartItem) => {
+        return cartItem.id == req.params.cartItemId;
+    }))
+
+    let foundCartItem;
+    if (foundCartIndex >= 0)
+        foundCartItem = foundCart.cartItems.splice(foundCartIndex, 1);
+
+    console.log(foundCartItem);
+    res.send(foundCartItem ? foundCartItem : 404);
+});
+/*
+Store Item:
+GET /StoreItem/:StoreItemID – Get the store item’s details
+GET /StoreItem?query=abc – Get all items that satisfy the regular expression query
+ */
+// get store item's details
+app.get('/StoreItem/:StoreItemID', (req, res) => {
+    const foundStoreItem = storeItems.find( (storeItem) => {
+        return storeItem.id == req.params.StoreItemID;
+    })
+    res.send(foundStoreItem ? foundStoreItem : 404);
+})
+
+// get all items that satisfy the regular expression query
+app.get('/StoreItem', (req, res) => {
+    let re = new RegExp(req.query.query);
+    let foundStoreItems = storeItems.filter( (storeItem) => {
+        return re.test(storeItem.name);
+    })
+    res.send(foundStoreItems ? foundStoreItems : 404);
+})
 
 app.listen(8080);
