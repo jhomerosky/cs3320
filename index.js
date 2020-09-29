@@ -5,102 +5,156 @@ app.use(express.json());
 console.log("reloaded");
 
 let users = [];
-let store = {
-  "StoreItems": [
+let usersNextId = 0;
+
+let storeItemsNextId = 0;
+let storeItems = [
     {
-      "id": 1,
-      "name": "apple"
+        id: storeItemsNextId++,
+        name: "apple"
     },
     {
-      "id": 2,
-      "name": "keyboard"
+        id: storeItemsNextId++,
+        name: "banana"
     },
     {
-      "id": 3,
-      "name": "chair"
+        id: storeItemsNextId++,
+        name: "guitar"
     },
     {
-      "id": 4,
-      "quantity": 15
+        id: storeItemsNextId++,
+        name: "keyboard"
+    },
+    {
+        id: storeItemsNextId++,
+        name: "notebook"
     }
-  ]
+]
+
+let carts = [];
+let cartsNextId = 0;
+
+let firstUser = {
+    id: usersNextId++,
+    firstName: "John",
+    lastName: "Doe",
+    email: "user@example.com",
+    cart: {}
 }
 
-
-const sampleUser = {
-    "id":users.length,
-    "firstName": "Sample",
-    "lastName": "Author",
-    "email": "user@example.com",
-    "cart": {
-      "cartId": 0,
-      "cartItems": [
-        {
-          "id": 1,
-          "quantity": 4
-        },
-        {
-          "id": 2,
-          "quantity": 1
-        },
-        {
-          "id": 4,
-          "quantity": 15
-        }
-      ]
-    }
+let secondUser = {
+    id: usersNextId++,
+    firstName: "Bob",
+    lastName: "Dylan",
+    email: "bob.dylan@gmail.com",
+    cart: {}
 }
 
+// populating users
+let firstCart = {
+    id: cartsNextId++,
+    owner: firstUser.id,
+    cartItems: []
+}
 
-users.push(sampleUser);
+let secondCart = {
+    id: cartsNextId++,
+    owner: secondUser.id,
+    cartItems: []
+}
 
+firstUser.cart = firstCart;
+secondUser.cart = secondCart;
+
+users.push(firstUser);
+users.push(secondUser);
+
+carts.push(firstCart);
+carts.push(secondCart);
+
+
+// populating carts
+item = storeItems.find((storeItem) => {
+        return storeItem.name === "apple";
+    });
+item.count = 2;
+firstUser.cart.cartItems.push(item);
+
+item = storeItems.find((storeItem) => {
+        return storeItem.name === "banana";
+    });
+item.count = 4;
+firstUser.cart.cartItems.push(item);
+item.count = 3;
+secondUser.cart.cartItems.push(item);
+
+item = storeItems.find((storeItem) => {
+        return storeItem.name === "guitar";
+    });
+item.count = 1;
+secondUser.cart.cartItems.push(item);
+
+item = storeItems.find((storeItem) => {
+        return storeItem.name === "keyboard";
+    });
+item.count = 1;
+firstUser.cart.cartItems.push(item);
+secondUser.cart.cartItems.push(item);
+
+
+// printing
+//console.log(JSON.stringify(users));
+//console.log(JSON.stringify(carts));
+//console.log(JSON.stringify(storeItems));
 
 //get all users
 app.get('/users', (req, res) => {
-        res.send(users);
-    })
-
-
-//get users by firstname
-app.get('/users/byFirstName', (req, res) => {
-    const foundUser = users.filter((user) =>{
-        return user.firstName == req.param('firstName');
-    })
-
-    res.send(foundUser);
-})
+    res.send(users);
+});
 
 //get user by ID
-app.get('/users/byId/:id', (req, res) => {
+app.get('/user/:UserId', (req, res) => {
     const foundUser = users.find((user) => {
-        return user.id == req.params.id;
+        return user.id == req.params.UserId;
     })
-
-    res.send(foundUser);
-})
-
-//delete user by ID
-app.delete('/users/byId/:id', (req, res) => {
-    const foundUser = users.find((user) => {
-        return user.id == req.params.id; // change this to remove user from users[]
-    })
-
-    res.send(foundUser);
-})
+    res.send(foundUser ? foundUser : 404);
+});
 
 //Create a user
 app.post('/user', (req, res) => {
     let newUser = req.body;
-    /*
-    newuser.author = {};
-    newuser.author.firstName = req.body.author.firstName;
-    newuser.author.firstName = req.body.author.lastName;
-
-    newuser.title = req.body.title;*/
-    newUser.id = users.length;
-
+    newUser.id = usersNextId++;
+    let newUserCart = {
+        id: cartsNextId++,
+        owner: newUser.id,
+        cartItems: []
+    }
+    newUser.cart = newUserCart;
+    carts.push(newUserCart);
     users.push(newUser);
-    res.send(204);
-})
+    res.send(newUser);
+});
+
+//get user's cart
+app.get('/user/:UserId/cart', (req, res) => {
+    const foundCart = carts.find( (cart) => {
+        return cart.owner == req.params.UserId;
+    })
+    res.send(foundCart ? foundCart : 404);
+});
+
+//empty cart by ID
+app.delete('/user/:UserId/cart', (req, res) => {
+    const foundUser = users.find( (user) => {
+        return user.id == req.params.UserId;
+    })
+    const foundCartItems = foundUser.cart.cartItems;
+    foundUser.cart.cartItems = [];
+    res.send(foundCartItems ? foundUser.cart : 404);
+});
+
+app.post('/cart/:CartId/cartItem', (req, res) => {
+
+});
 
 app.listen(8080);
