@@ -160,16 +160,6 @@ createNewCartItemAndPush = (cartId, storeItemName, quantity) => {
 
 
 const initData = async () => {
-    /*
-    createNewUserAndPush("John", "Doe", "user@example.com");
-    createNewUserAndPush("Bob", "Dylan", "bob.dylan@gmail.com");
-    createNewCartItemAndPush (0, "apple", 2);
-    createNewCartItemAndPush (0, "banana", 4);
-    createNewCartItemAndPush (1, "banana", 3);
-    createNewCartItemAndPush (1, "guitar", 1);
-    createNewCartItemAndPush (0, "keyboard", 1);
-    createNewCartItemAndPush (1, "keyboard", 1);
-    */
     await initDataBase();
     console.log("Database initialized");
 
@@ -191,7 +181,7 @@ const initData = async () => {
     console.log("ready");
 
 }
-let users = [];
+
 initData();
 
 router.get('/', async (req, res) => {
