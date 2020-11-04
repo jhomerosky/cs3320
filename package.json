@@ -1,0 +1,12 @@
+{
+  "name": "Project",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.10.11"
+  },
+  "devDependencies": {
+    "connect-mongo": "^3.2.0",
+    "express-session": "^1.17.1"
+  }
+}
