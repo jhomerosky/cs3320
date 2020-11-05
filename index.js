@@ -63,7 +63,6 @@ const initUsers = async () => {
 }
 
 const initCarts = async () => {
-    let carts = [];
     const foundUsers = await User.find({});
     for (let i = 0; i < foundUsers.length; i++)
     {
@@ -97,86 +96,41 @@ const pushStoreItemToCart = async (cart, storeItem, quantity) => {
     if (!cart || !storeItem)
         return;
 
-    let foundCartItem;
-    foundCartItem = cart.cartItems.find((cartItem) => {
-        return cartItem.storeItem._id == storeItem._id;
+    const foundCartItem = cart.cartItems.find((cartItem) => {
+        // I spent two days debugging this. Both IDs are equal but == and === will not return true
+        // unless I typecast to string. I do not know why.
+        return String(cartItem.storeItem._id) === String(storeItem._id);
     });
-
     if (foundCartItem)
     {
-        console.log("found storeItem already existing in cart");
         foundCartItem.quantity += quantity;
     } else {
-        const newCartItem = {
+        let newCartItem = {
             quantity: quantity,
             storeItem: storeItem
-        }.populate('storeItem');
+        }
         cart.cartItems.push(newCartItem);
     }
     await cart.save();
 }
 
-
-
-
-
-/*
-createNewUserAndPush = (firstname, lastname, email) => {
-    const newId = usersNextId++;
-    const newUser = {
-        id: newId,
-        firstName: firstname,
-        lastName: lastname,
-        email: email,
-        cart: {
-            id: cartsNextId++,
-            owner: newId,
-            nextCartItemId: 0,
-            cartItems: []
-        }
-    }
-    users.push(newUser);
-    carts.push(newUser.cart);
-    return newUser;
-}
-
-createNewCartItemAndPush = (cartId, storeItemName, quantity) => {
-    const foundStoreItem = storeItems.find((storeItem) => {
-        return storeItem.name === storeItemName;
-    });
-    const foundCart = carts.find( (cart) => {
-        return (cart.id === cartId);
-    });
-    const newItem = {
-        id: foundCart.nextCartItemId++,
-        storeItemId: foundStoreItem.id,
-        name: foundStoreItem.name,
-        quantity: quantity
-    }
-    foundCart.cartItems.push(newItem);
-    return newItem;
-}
-*/
-
-
 const initData = async () => {
     await initDataBase();
     console.log("Database initialized");
-
-    await User.deleteMany({});
-    console.log("Deleted users");
-    await Cart.deleteMany({});
-    console.log("Deleted carts");
+    //await User.deleteMany({});
+    //console.log("Deleted users");
+    //await Cart.deleteMany({});
+    //console.log("Deleted carts");
     //await StoreItem.deleteMany({});
     //console.log("Deleted storeItems");
     //await initStoreItems();
     //console.log("Initialized storeItems");
-    await initUsers();
-    console.log("Initialized users");
-    await initCarts();
-    console.log("Initialized carts");
-    await initCartItems();
-    console.log("Initialized carts with items");
+    //await initUsers();
+    //console.log("Initialized users");
+    //await initCarts();
+    //console.log("Initialized carts");
+    //await initCartItems();
+    //console.log("Initialized carts with items");
 
     console.log("ready");
 
@@ -227,10 +181,10 @@ router.post('/user', async (req, res) => {
 router.get('/user/:UserId/cart', async (req, res) => {
     try {
         const foundUser = await User.findById(req.params.UserId).populate('cart');
-        const foundCart = foundUser[0].cart;
+        const foundCart = foundUser.cart;
         return res.send( foundCart ? foundCart : 404);
     } catch (e) {
-        //console.log(e);
+        console.log(e);
     }
 
     res.send(404);
@@ -239,30 +193,30 @@ router.get('/user/:UserId/cart', async (req, res) => {
 //empty cart by ID
 router.delete('/user/:UserId/cart', async (req, res) => {
     try {
-        const foundUser = await User.findById(req.params.id).populate('cart');
-        const foundCart = foundUser[0].cart;
+        const foundUser = await User.findById(req.params.UserId).populate('cart');
+        const foundCart = foundUser.cart;
         if (foundCart) {
             foundCart.cartItems = [];
-            await foundUser[0].save();
+            await foundUser.save();
             await foundCart.save();
         }
 
         return res.send(foundCart ? foundCart : 404);
     } catch (e) {
-        //console.log(e);
+        console.log(e);
     }
     res.send(404);
 });
 
 // add new item to cart by CartId; body contains store id and quantity
 router.post('/cart/:CartId/cartItem', async (req, res) => {
-    const foundCart = (await Cart.findById(req.params.CartId))[0];
-    const foundStoreItem = (await StoreItem.findById(req.body.id))[0];
-
-    console.log(foundCart);
-    console.log(foundStoreItem);
+    let foundCart;
+    let foundStoreItem;
     try {
-        await pushStoreItemToCart(foundCart, foundStoreItem, req.params.quantity);
+        foundCart = await Cart.findById(req.params.CartId);
+        foundStoreItem = await StoreItem.findById(req.body.id);
+
+        await pushStoreItemToCart(foundCart, foundStoreItem, req.body.quantity);
     } catch (e) {
         //console.log(e);
     }
@@ -271,35 +225,41 @@ router.post('/cart/:CartId/cartItem', async (req, res) => {
 });
 
 // remove item from cart by CartId, cartItemId
-router.delete('/cart/:CartId/cartItem/:cartItemId', (req, res) => {
-    let foundCart = carts.find((cart) => {
-        return cart.id == req.params.CartId;
-    })
-    if (!foundCart) return res.send(404);
-    const foundCartIndex = foundCart.cartItems.indexOf(foundCart.cartItems.find( (cartItem) => {
-        return cartItem.id == req.params.cartItemId;
-    }))
-    let foundCartItem;
-    if (foundCartIndex >= 0)
-        foundCartItem = foundCart.cartItems.splice(foundCartIndex, 1);
+router.delete('/cart/:CartId/cartItem/:cartItemId', async (req, res) => {
+    let deletedCartItem;
+    try{
+        const foundCart = await Cart.findById(req.params.CartId);
+        const foundCartItemIndex = foundCart.cartItems.indexOf(foundCart.cartItems.find( (cartItem) => {
+            return String(cartItem._id) === String(req.params.cartItemId);
+        }));
 
-    res.send(foundCartItem ? foundCartItem : 404);
+        if (foundCartItemIndex >= 0)
+            deletedCartItem = foundCart.cartItems.splice(foundCartItemIndex, 1);
+        await foundCart.save();
+    } catch(e)
+    {
+        //console.log(e);
+    }
+
+    res.send(deletedCartItem ? deletedCartItem : 404);
 });
 
 // get store item's details
-router.get('/StoreItem/:StoreItemID', (req, res) => {
-    const foundStoreItem = storeItems.find( (storeItem) => {
-        return storeItem.id == req.params.StoreItemID;
-    })
-    res.send(foundStoreItem ? foundStoreItem : 404);
+router.get('/StoreItem/:StoreItemID', async (req, res) => {
+    let foundStoreItem;
+    try{
+        foundStoreItem = await StoreItem.findById(req.params.StoreItemID);
+    } catch (e) {
+        console.log(e);
+    }
+    res.send (foundStoreItem ? foundStoreItem : 404);
 })
 
 // get all items that satisfy the regular expression query
-router.get('/StoreItem', (req, res) => {
-    let re = new RegExp(req.query.query);
-    let foundStoreItems = storeItems.filter( (storeItem) => {
-        return re.test(storeItem.name);
-    })
+router.get('/StoreItem', async (req, res) => {
+    const foundStoreItems = await StoreItem.find({
+        itemName: new RegExp(req.query.name)
+    });
     res.send(foundStoreItems ? foundStoreItems : 404);
 })
 
