@@ -19,12 +19,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="460c911b-864f-4f11-880b-2539f4c8da05" name="Default Changelist" comment="progress as of 11:59pm 11/4/20&#10;finished all requirements except sessions">
-      <change afterPath="$PROJECT_DIR$/routes/cartRoutes.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/routes/storeitemRoutes.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/routes/userRoutes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+    <list default="true" id="460c911b-864f-4f11-880b-2539f4c8da05" name="Default Changelist" comment="finished database project except for EC">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +90,7 @@
       <workItem from="1604528036177" duration="1479000" />
       <workItem from="1604541462371" duration="12620000" />
       <workItem from="1604617410309" duration="764000" />
-      <workItem from="1604708843933" duration="13030000" />
+      <workItem from="1604708843933" duration="13316000" />
     </task>
     <task id="LOCAL-00001" summary="progress as of 11:55pm 11/3/20">
       <created>1604469487921</created>
@@ -117,7 +113,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604555937939</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="finished database project except for EC">
+      <created>1604731814118</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1604731814118</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -139,7 +142,8 @@
     <MESSAGE value="progress as of 11:55pm 11/3/20" />
     <MESSAGE value="progress as of 11:59pm 11/3/20" />
     <MESSAGE value="progress as of 11:59pm 11/4/20&#10;finished all requirements except sessions" />
-    <option name="LAST_COMMIT_MESSAGE" value="progress as of 11:59pm 11/4/20&#10;finished all requirements except sessions" />
+    <MESSAGE value="finished database project except for EC" />
+    <option name="LAST_COMMIT_MESSAGE" value="finished database project except for EC" />
   </component>
   <component name="WindowStateProjectService">
     <state x="397" y="179" width="1092" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603234004119">
@@ -219,10 +223,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="938" height="344" key="GridCell.Tab.3.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604561527291" />
-    <state x="72" y="256" key="Vcs.Push.Dialog.v2" timestamp="1604555944040">
+    <state x="72" y="256" key="Vcs.Push.Dialog.v2" timestamp="1604731820773">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="72" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604555944040" />
+    <state x="72" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604731820773" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1601706970116">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
