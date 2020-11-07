@@ -5,6 +5,8 @@ const UserSchema = new mongoose.Schema(
     {
         firstName: String,
         lastName: String,
+        login: String,
+        password: String,
         email: String,
         cart: {type: mongoose.ObjectId, ref: 'Cart'}
     }

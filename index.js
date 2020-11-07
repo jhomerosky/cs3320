@@ -14,6 +14,9 @@ const User = require('./user');
 const Cart = require('./cart');
 const StoreItem = require('./storeitem');
 
+const jwt = require('jsonwebtoken');
+const accessTokenSecret = "CS3320DatabaseJWTSecretJH";
+
 let database;
 
 const initDataBase = async () => {
@@ -54,7 +57,9 @@ const initUsers = async () => {
         users.push({
             firstName: firstNames[i],
             lastName: lastNames[i],
-            email: emails[i]
+            email: emails[i],
+            login: `${firstNames[i]}.${lastNames[i]}`,
+            password: 'password123'
         });
     }
     await User.create(users);
@@ -76,10 +81,10 @@ const initCarts = async () => {
 const initCartItems = async () => {
     const foundUsers = await User.find({}).populate('cart');
 
-    const apple = await StoreItem.find({itemName: "apple"})[0];
-    const banana = await StoreItem.find({itemName: "banana"})[0];
-    const guitar = await StoreItem.find({itemName: "guitar"})[0];
-    const keyboard = await StoreItem.find({itemName: "keyboard"})[0];
+    const apple = (await StoreItem.find({itemName: "apple"}))[0];
+    const banana = (await StoreItem.find({itemName: "banana"}))[0];
+    const guitar = (await StoreItem.find({itemName: "guitar"}))[0];
+    const keyboard = (await StoreItem.find({itemName: "keyboard"}))[0];
 
     foundUsers[0].cart.cartItems.push({ quantity: 2, storeItem: apple });
     foundUsers[0].cart.cartItems.push({ quantity: 4, storeItem: banana });
@@ -133,7 +138,7 @@ router.get('/users', async (req, res) => {
 });
 
 //get user by ID
-//Postman: localhost:8080/user/5fa60c52ca168c3e94725eef
+//Postman: localhost:8080/user/5fa657e6f0b7550904ad2829
 router.get('/user/:UserId', async (req, res) => {
     try {
         const foundUser = await User.findById(req.params.UserId).populate('cart');
@@ -165,7 +170,7 @@ router.post('/user', async (req, res) => {
 });
 
 //get user's cart
-//Postman: localhost:8080/user/5fa60c52ca168c3e94725eef/cart
+//Postman: localhost:8080/user/5fa657e6f0b7550904ad2829/cart
 router.get('/user/:UserId/cart', async (req, res) => {
     try {
         const foundUser = await User.findById(req.params.UserId).populate('cart');
@@ -179,7 +184,7 @@ router.get('/user/:UserId/cart', async (req, res) => {
 });
 
 //empty cart by ID
-//Postman: localhost:8080/user/5fa60c52ca168c3e94725eef/cart
+//Postman: localhost:8080/user/5fa657e6f0b7550904ad2829/cart
 router.delete('/user/:UserId/cart', async (req, res) => {
     try {
         const foundUser = await User.findById(req.params.UserId).populate('cart');
@@ -200,10 +205,10 @@ router.delete('/user/:UserId/cart', async (req, res) => {
 
 //app.use(require('./routes/cartRoutes'));
 // add new item to cart by CartId; body contains store id and quantity
-//Postman: localhost:8080/cart/5fa60c52ca168c3e94725ef1/cartItem
+//Postman: localhost:8080/cart/5fa657e6f0b7550904ad282b/cartItem
 /* Postman Body:
 {
-    "id": "5fa361864a12b9155cc090d2",
+    "id": "5fa657e6f0b7550904ad2825",
     "quantity": 2
 }
  */
@@ -243,7 +248,7 @@ router.post('/cart/:CartId/cartItem', async (req, res) => {
 // remove item from cart by CartId, cartItemId
 //WARNING: cartItemId is different from storeItemId; mongoose creates a new cartItemId every time a unique item is added
 //Postman tests require searching for a new cartItemId from a previous GET result
-//Postman: localhost:8080/cart/5fa60c52ca168c3e94725ef1/cartItem/5fa63a5ef610822b582c1873
+//Postman: localhost:8080/cart/5fa657e6f0b7550904ad282b/cartItem/5fa6582ff0b7550904ad2833
 router.delete('/cart/:CartId/cartItem/:cartItemId', async (req, res) => {
     let deletedCartItem;
     try{
@@ -265,7 +270,7 @@ router.delete('/cart/:CartId/cartItem/:cartItemId', async (req, res) => {
 
 //app.use(require('./routes/storeitemRoutes'));
 // get store item's details
-//Postman: localhost:8080/StoreItem/5fa361864a12b9155cc090d2
+//Postman: localhost:8080/StoreItem/5fa657e6f0b7550904ad2824
 router.get('/StoreItem/:StoreItemID', async (req, res) => {
     let foundStoreItem;
     try {
@@ -317,3 +322,40 @@ router.get('/StoreItems/Recent', async (req, res) => {
 
 app.listen(port);
 console.log("listening on port " + port);
+
+
+// new JWT routes
+
+app.use(async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (authHeader) {
+            const jwtToken = authHeader.split(' ')[1];
+            const user = jwt.verify(jwtToken, accessTokenSecret);
+            req.user = user;
+        }
+    } catch (e) {
+        res.send(403);
+    }
+    next();
+});
+
+//Postman: localhost:8080/user/login
+/* Postman body
+{
+    "login": "John.Doe",
+    "password": "password123"
+}
+ */
+router.post('/user/login', async (req, res) => {
+    const {login, password} = req.body;
+    const foundUser = await User.findOne({login, password});
+
+    if (foundUser) {
+        const accessToken = jwt.sign({user:foundUser}, accessTokenSecret);
+        res.send(accessToken);
+    } else {
+        res.send(403);
+    }
+});
