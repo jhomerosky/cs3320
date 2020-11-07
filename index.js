@@ -155,7 +155,9 @@ router.get('/user/:UserId', async (req, res) => {
 {
     "firstName": "Syd",
     "lastName": "Barret",
-    "email": "syd.barret@gmail.com"
+    "email": "syd.barret@gmail.com",
+    "login": "Syd.Barrett",
+    "password": "password123"
 }
  */
 router.post('/user', async (req, res) => {
