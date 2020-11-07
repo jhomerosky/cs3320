@@ -4,10 +4,8 @@ const MongoStore = require('connect-mongo')(session);
 
 const port = process.env.PORT || 8080;
 const app = express();
-
 app.use(express.json());
 const router = express.Router();
-
 
 const mongoose = require('mongoose');
 const url = 'mongodb+srv://dbUser:iJPvPJCel@cluster0.hgetv.mongodb.net/store-db?retryWrites=true&w=majority';
@@ -70,8 +68,7 @@ const initCarts = async () => {
             ownerID: foundUsers[i]._id,
             cartItems: []
         };
-        const createdCart = await Cart.create(newCart);
-        foundUsers[i].cart = createdCart;
+        foundUsers[i].cart = await Cart.create(newCart);
         await foundUsers[i].save();
     }
 }
@@ -79,72 +76,53 @@ const initCarts = async () => {
 const initCartItems = async () => {
     const foundUsers = await User.find({}).populate('cart');
 
-    const apple = await StoreItem.find({itemName: "apple"});
-    const banana = await StoreItem.find({itemName: "banana"});
-    const guitar = await StoreItem.find({itemName: "guitar"});
-    const keyboard = await StoreItem.find({itemName: "keyboard"});
+    const apple = await StoreItem.find({itemName: "apple"})[0];
+    const banana = await StoreItem.find({itemName: "banana"})[0];
+    const guitar = await StoreItem.find({itemName: "guitar"})[0];
+    const keyboard = await StoreItem.find({itemName: "keyboard"})[0];
 
-    await pushStoreItemToCart(foundUsers[0].cart, apple[0], 2);
-    await pushStoreItemToCart(foundUsers[0].cart, banana[0], 4);
-    await pushStoreItemToCart(foundUsers[1].cart, banana[0], 3);
-    await pushStoreItemToCart(foundUsers[1].cart, guitar[0], 1);
-    await pushStoreItemToCart(foundUsers[0].cart, keyboard[0], 1);
-    await pushStoreItemToCart(foundUsers[1].cart, keyboard[0], 1);
+    foundUsers[0].cart.cartItems.push({ quantity: 2, storeItem: apple });
+    foundUsers[0].cart.cartItems.push({ quantity: 4, storeItem: banana });
+    foundUsers[1].cart.cartItems.push({ quantity: 3, storeItem: banana });
+    foundUsers[1].cart.cartItems.push({ quantity: 1, storeItem: guitar });
+    foundUsers[0].cart.cartItems.push({ quantity: 1, storeItem: keyboard });
+    foundUsers[1].cart.cartItems.push({ quantity: 1, storeItem: keyboard });
+
+    await foundUsers[0].cart.save();
+    await foundUsers[1].cart.save();
+
 }
 
-const pushStoreItemToCart = async (cart, storeItem, quantity) => {
-    if (!cart || !storeItem)
-        return;
-
-    const foundCartItem = cart.cartItems.find((cartItem) => {
-        // I spent two days debugging this. Both IDs are equal but == and === will not return true
-        // unless I typecast to string. I do not know why.
-        return String(cartItem.storeItem._id) === String(storeItem._id);
-    });
-    if (foundCartItem)
-    {
-        foundCartItem.quantity += quantity;
-    } else {
-        let newCartItem = {
-            quantity: quantity,
-            storeItem: storeItem
-        }
-        cart.cartItems.push(newCartItem);
-    }
-    await cart.save();
-}
-
+// empties and re-initializes database data
 const initData = async () => {
+    await User.deleteMany({});
+    console.log("Deleted users");
+    await Cart.deleteMany({});
+    console.log("Deleted carts");
+    await StoreItem.deleteMany({});
+    console.log("Deleted storeItems");
+    await initStoreItems();
+    console.log("Initialized storeItems");
+    await initUsers();
+    console.log("Initialized users");
+    await initCarts();
+    console.log("Initialized carts");
+    await initCartItems();
+    console.log("Initialized carts with items");
+}
+
+const init = async () => {
     await initDataBase();
     console.log("Database initialized");
-    //await User.deleteMany({});
-    //console.log("Deleted users");
-    //await Cart.deleteMany({});
-    //console.log("Deleted carts");
-    //await StoreItem.deleteMany({});
-    //console.log("Deleted storeItems");
-    //await initStoreItems();
-    //console.log("Initialized storeItems");
-    //await initUsers();
-    //console.log("Initialized users");
-    //await initCarts();
-    //console.log("Initialized carts");
-    //await initCartItems();
-    //console.log("Initialized carts with items");
-
+    //await initData();
     console.log("ready");
-
 }
 
-initData();
+init();
 
-router.get('/', async (req, res) => {
-    console.log(`req.session: ${JSON.stringify(req.session)}`);
-    req.session.numCalls++;
-    res.send(200);
-})
-
+//app.use(require('./routes/userRoutes'));
 //get all users or get by filter query param using Regular Expression
+//Postman: localhost:8080/users/
 router.get('/users', async (req, res) => {
     let foundUsers = await User.find({
         firstName: new RegExp(req.query.firstName),
@@ -155,6 +133,7 @@ router.get('/users', async (req, res) => {
 });
 
 //get user by ID
+//Postman: localhost:8080/user/5fa60c52ca168c3e94725eef
 router.get('/user/:UserId', async (req, res) => {
     try {
         const foundUser = await User.findById(req.params.UserId).populate('cart');
@@ -166,6 +145,14 @@ router.get('/user/:UserId', async (req, res) => {
 });
 
 //Create a user
+//Postman: localhost:8080/users/
+/*Postman body:
+{
+    "firstName": "Syd",
+    "lastName": "Barret",
+    "email": "syd.barret@gmail.com"
+}
+ */
 router.post('/user', async (req, res) => {
     const newUser = await User.create(req.body);
     newUser.cart = await Cart.create({
@@ -178,19 +165,21 @@ router.post('/user', async (req, res) => {
 });
 
 //get user's cart
+//Postman: localhost:8080/user/5fa60c52ca168c3e94725eef/cart
 router.get('/user/:UserId/cart', async (req, res) => {
     try {
         const foundUser = await User.findById(req.params.UserId).populate('cart');
         const foundCart = foundUser.cart;
         return res.send( foundCart ? foundCart : 404);
     } catch (e) {
-        console.log(e);
+        //console.log(e);
     }
 
     res.send(404);
 });
 
 //empty cart by ID
+//Postman: localhost:8080/user/5fa60c52ca168c3e94725eef/cart
 router.delete('/user/:UserId/cart', async (req, res) => {
     try {
         const foundUser = await User.findById(req.params.UserId).populate('cart');
@@ -203,12 +192,21 @@ router.delete('/user/:UserId/cart', async (req, res) => {
 
         return res.send(foundCart ? foundCart : 404);
     } catch (e) {
-        console.log(e);
+        //console.log(e);
     }
     res.send(404);
 });
 
+
+//app.use(require('./routes/cartRoutes'));
 // add new item to cart by CartId; body contains store id and quantity
+//Postman: localhost:8080/cart/5fa60c52ca168c3e94725ef1/cartItem
+/* Postman Body:
+{
+    "id": "5fa361864a12b9155cc090d2",
+    "quantity": 2
+}
+ */
 router.post('/cart/:CartId/cartItem', async (req, res) => {
     let foundCart;
     let foundStoreItem;
@@ -216,15 +214,36 @@ router.post('/cart/:CartId/cartItem', async (req, res) => {
         foundCart = await Cart.findById(req.params.CartId);
         foundStoreItem = await StoreItem.findById(req.body.id);
 
-        await pushStoreItemToCart(foundCart, foundStoreItem, req.body.quantity);
+        //push store item to cart
+        if (foundCart && foundStoreItem) {
+            const foundCartItem = foundCart.cartItems.find((cartItem) => {
+                // I spent two days debugging this. Both IDs are equal but == and === will not return true
+                // unless I typecast to string. I do not know why.
+                return String(cartItem.storeItem._id) === String(foundStoreItem._id);
+            });
+            if (foundCartItem) {
+                foundCartItem.quantity += req.body.quantity;
+            } else {
+                let newCartItem = {
+                    quantity: req.body.quantity,
+                    storeItem: foundStoreItem
+                }
+                foundCart.cartItems.push(newCartItem);
+            }
+            await foundCart.save();
+        }
+
     } catch (e) {
-        //console.log(e);
+        console.log(e);
     }
 
     res.send((foundStoreItem && foundCart) ? foundCart : 404);
 });
 
 // remove item from cart by CartId, cartItemId
+//WARNING: cartItemId is different from storeItemId; mongoose creates a new cartItemId every time a unique item is added
+//Postman tests require searching for a new cartItemId from a previous GET result
+//Postman: localhost:8080/cart/5fa60c52ca168c3e94725ef1/cartItem/5fa63a5ef610822b582c1873
 router.delete('/cart/:CartId/cartItem/:cartItemId', async (req, res) => {
     let deletedCartItem;
     try{
@@ -244,11 +263,19 @@ router.delete('/cart/:CartId/cartItem/:cartItemId', async (req, res) => {
     res.send(deletedCartItem ? deletedCartItem : 404);
 });
 
+//app.use(require('./routes/storeitemRoutes'));
 // get store item's details
+//Postman: localhost:8080/StoreItem/5fa361864a12b9155cc090d2
 router.get('/StoreItem/:StoreItemID', async (req, res) => {
     let foundStoreItem;
-    try{
+    try {
         foundStoreItem = await StoreItem.findById(req.params.StoreItemID);
+        if (!req.session.lastItemsViewed) {
+            req.session.lastItemsViewed = [foundStoreItem];
+        } else {
+            if (req.session.lastItemsViewed.length >= 10) req.session.lastItemsViewed.shift();
+            req.session.lastItemsViewed.push(foundStoreItem);
+        }
     } catch (e) {
         console.log(e);
     }
@@ -256,11 +283,36 @@ router.get('/StoreItem/:StoreItemID', async (req, res) => {
 })
 
 // get all items that satisfy the regular expression query
-router.get('/StoreItem', async (req, res) => {
+//Postman: localhost:8080/StoreItems?name=a
+router.get('/StoreItems', async (req, res) => {
     const foundStoreItems = await StoreItem.find({
         itemName: new RegExp(req.query.name)
     });
     res.send(foundStoreItems ? foundStoreItems : 404);
+})
+
+//get up to 10 of the most recent items searched from /StoreItem/:StoreItemID
+//Postman: localhost:8080/StoreItems/Recent?num=10
+router.get('/StoreItems/Recent', async (req, res) => {
+    const sess = req.session;
+    const num = req.query.num;
+
+    if (!num)
+        return res.send(404);
+
+    if (num < 0 || num > 10)
+        return res.send(404);
+
+    if (!sess.lastItemsViewed)
+        return res.send([]);
+
+    let foundItems = [];
+    for (let i = sess.lastItemsViewed.length - 1; i >= Math.max(sess.lastItemsViewed.length - num, 0); i--)
+    {
+        foundItems.push(sess.lastItemsViewed[i]);
+    }
+
+    res.send(foundItems);
 })
 
 app.listen(port);

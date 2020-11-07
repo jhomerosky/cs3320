@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "45ce0634-bda1-4b9c-bb23-65f47c40a68f",
+		"name": "cs3320 db test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/users/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/users/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/user/1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/user/5fa60c52ca168c3e94725eef",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"5fa60c52ca168c3e94725eef"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Syd\",\r\n    \"lastName\": \"Barret\",\r\n    \"email\": \"syd.barret@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/user",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/user/1/cart",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/user/5fa60c52ca168c3e94725eef/cart",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"5fa60c52ca168c3e94725eef",
+						"cart"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/user/1/cart",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/user/5fa60c52ca168c3e94725eef/cart",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"5fa60c52ca168c3e94725eef",
+						"cart"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/cart/1/cartItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"5fa361864a12b9155cc090d2\",\r\n    \"quantity\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/cart/5fa60c52ca168c3e94725ef1/cartItem",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"cart",
+						"5fa60c52ca168c3e94725ef1",
+						"cartItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/cart/1/cartItem/1",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/cart/5fa60c52ca168c3e94725ef1/cartItem/5fa642dee06b2817b06d61f5",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"cart",
+						"5fa60c52ca168c3e94725ef1",
+						"cartItem",
+						"5fa642dee06b2817b06d61f5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/StoreItem/2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/StoreItem/5fa361864a12b9155cc090d1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"StoreItem",
+						"5fa361864a12b9155cc090d1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/StoreItem?query=a",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/StoreItems?name=a",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"StoreItems"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "a"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/StoreItems/Recent?num=10",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/StoreItems/Recent?num=10",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"StoreItems",
+						"Recent"
+					],
+					"query": [
+						{
+							"key": "num",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
