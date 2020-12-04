@@ -1,9 +1,18 @@
 const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const cors = require('cors');
 
 const port = process.env.PORT || 8080;
 const app = express();
+
+const corsConfig = {
+    origin: true,
+    credentials: true,
+};
+app.use(cors(corsConfig));
+app.options('*', cors(corsConfig));
+
 app.use(express.json());
 const router = express.Router();
 
@@ -26,6 +35,7 @@ const initDataBase = async () => {
             secret: 'CS3320DatabaseSecretJH',
             store: new MongoStore({mongooseConnection: mongoose.connection})
         }));
+        app.use(cors());
         app.use(router);
         console.log('Successfully connected to DB');
     } else {
@@ -118,7 +128,7 @@ const initData = async () => {
 
 const init = async () => {
     await initDataBase();
-    console.log("Database initialized");
+    console.log("Database connected");
     //await initData();
     console.log("ready");
 }
@@ -132,7 +142,7 @@ router.get('/users', async (req, res) => {
     let foundUsers = await User.find({
         firstName: new RegExp(req.query.firstName),
         lastName: new RegExp(req.query.lastName)
-    }).populate('cart');
+    }).populate('cart')
 
     res.send(foundUsers ? foundUsers : 404);
 });
@@ -141,7 +151,16 @@ router.get('/users', async (req, res) => {
 //Postman: localhost:8080/user/5fa657e6f0b7550904ad2829
 router.get('/user/:UserId', async (req, res) => {
     try {
-        const foundUser = await User.findById(req.params.UserId).populate('cart');
+        const foundUser = await User.findById(req.params.UserId).populate([
+                {
+                    path: 'cart',
+                    model: 'Cart',
+                    populate: {
+                        path: 'cartItems.storeItem',
+                        model: 'StoreItem',
+                    }
+                },
+        ]);
         return res.send(foundUser ? foundUser :  404);
     } catch (e) {
         //console.log(e);
@@ -175,7 +194,16 @@ router.post('/user', async (req, res) => {
 //Postman: localhost:8080/user/5fa657e6f0b7550904ad2829/cart
 router.get('/user/:UserId/cart', async (req, res) => {
     try {
-        const foundUser = await User.findById(req.params.UserId).populate('cart');
+        const foundUser = await User.findById(req.params.UserId).populate([
+            {
+                path: 'cart',
+                model: 'Cart',
+                populate: {
+                    path: 'cartItems.storeItem',
+                    model: 'StoreItem',
+                }
+            },
+        ]);
         const foundCart = foundUser.cart;
         return res.send( foundCart ? foundCart : 404);
     } catch (e) {
@@ -356,7 +384,7 @@ router.post('/user/login', async (req, res) => {
 
     if (foundUser) {
         const accessToken = jwt.sign({user:foundUser}, accessTokenSecret);
-        res.send(accessToken);
+        res.send({jwt: accessToken, user: foundUser});
     } else {
         res.send(403);
     }

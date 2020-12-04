@@ -19,9 +19,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="460c911b-864f-4f11-880b-2539f4c8da05" name="Default Changelist" comment="finished DB project + EC">
+    <list default="true" id="460c911b-864f-4f11-880b-2539f4c8da05" name="Default Changelist" comment="finished DB project + EC, patched creating new user&#10;this commit is my submission for the DB project">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,8 +33,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="package.json" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -40,12 +42,15 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1hf0nvrYpu2hN8KcbTuKQEoZFcN" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -92,7 +97,14 @@
       <workItem from="1604541462371" duration="12620000" />
       <workItem from="1604617410309" duration="764000" />
       <workItem from="1604708843933" duration="20153000" />
-      <workItem from="1604747027483" duration="224000" />
+      <workItem from="1604747027483" duration="315000" />
+      <workItem from="1605049415359" duration="31000" />
+      <workItem from="1605656253276" duration="1392000" />
+      <workItem from="1605828832719" duration="1329000" />
+      <workItem from="1606531031523" duration="42000" />
+      <workItem from="1606863636157" duration="3844000" />
+      <workItem from="1606945921525" duration="11232000" />
+      <workItem from="1607028584120" duration="5983000" />
     </task>
     <task id="LOCAL-00001" summary="progress as of 11:55pm 11/3/20">
       <created>1604469487921</created>
@@ -136,7 +148,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604746475605</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="finished DB project + EC, patched creating new user&#10;this commit is my submission for the DB project">
+      <created>1604747332942</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1604747332942</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -155,12 +174,14 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="progress as of 11:55pm 11/3/20" />
     <MESSAGE value="progress as of 11:59pm 11/3/20" />
     <MESSAGE value="progress as of 11:59pm 11/4/20&#10;finished all requirements except sessions" />
     <MESSAGE value="finished database project except for EC" />
     <MESSAGE value="finished DB project + EC" />
-    <option name="LAST_COMMIT_MESSAGE" value="finished DB project + EC" />
+    <MESSAGE value="finished DB project + EC, patched creating new user&#10;this commit is my submission for the DB project" />
+    <option name="LAST_COMMIT_MESSAGE" value="finished DB project + EC, patched creating new user&#10;this commit is my submission for the DB project" />
   </component>
   <component name="WindowStateProjectService">
     <state x="397" y="179" width="1092" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603234004119">
@@ -171,27 +192,31 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="717" y="322" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604715056420" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1604541168528">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1605656453035">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="-1180" y="275" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1600387938974" />
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604541168528" />
-    <state width="1899" height="280" key="GridCell.Tab.0.bottom" timestamp="1604746505694">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1605656453035" />
+    <state width="1899" height="280" key="GridCell.Tab.0.bottom" timestamp="1606990533935">
+      <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="280" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604746505694" />
-    <state width="1899" height="280" key="GridCell.Tab.0.center" timestamp="1604746505694">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1899" height="280" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1606990533935" />
+    <state width="1899" height="280" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1606978736054" />
+    <state width="1899" height="280" key="GridCell.Tab.0.center" timestamp="1606990533935">
+      <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="280" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604746505694" />
-    <state width="1899" height="280" key="GridCell.Tab.0.left" timestamp="1604746505694">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1899" height="280" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1606990533935" />
+    <state width="1899" height="280" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1606978736054" />
+    <state width="1899" height="280" key="GridCell.Tab.0.left" timestamp="1606990533935">
+      <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="280" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604746505694" />
-    <state width="1899" height="280" key="GridCell.Tab.0.right" timestamp="1604746505694">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1899" height="280" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1606990533935" />
+    <state width="1899" height="280" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1606978736054" />
+    <state width="1899" height="280" key="GridCell.Tab.0.right" timestamp="1606990533935">
+      <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="280" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604746505694" />
+    <state width="1899" height="280" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1606990533935" />
+    <state width="1899" height="280" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1606978736054" />
     <state width="938" height="344" key="GridCell.Tab.1.bottom" timestamp="1604561527291">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -240,10 +265,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="938" height="344" key="GridCell.Tab.3.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604561527291" />
-    <state x="72" y="256" key="Vcs.Push.Dialog.v2" timestamp="1604746489149">
+    <state x="72" y="256" key="Vcs.Push.Dialog.v2" timestamp="1604747335757">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="72" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604746489149" />
+    <state x="72" y="256" key="Vcs.Push.Dialog.v2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1604747335757" />
     <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1604740870132">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
